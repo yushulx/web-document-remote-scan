@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Remote Scanner & Mobile Camera</title>
+    <script type="text/javascript" src="Resources/dynamsoft.webtwain.initiate.js"></script>
+    <script type="text/javascript" src="Resources/dynamsoft.webtwain.config.js"></script>
+    <style>
+        .button {
+            background-color: #c44910;
+            color: white;
+            padding: 14px 12px;
+            cursor: pointer;
+        }
+
+        .source {
+            position: relative;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <select class="source" size="1" id="remote">
+        <option>192.168.8.72</option>
+    </select>
+    <select class="source" size="1" id="source"></select>
+    <div><br></div>
+    <div>
+        <input class="button" type="button" value="Remote Scanner" onclick="acquireImage()" />
+        <input class="button" type="button" value="Load Images" onclick="loadFile()" />
+    </div>
+    <div><br></div>
+
+    <script type="text/javascript">
+        // DOM elements
+        var element = document.createElement('div');
+        var containerName = 'container';
+        element.id = containerName;
+        document.body.appendChild(element);
+
+        var selectSource = document.getElementById('source');
+        var ip = document.getElementById('remote');
+        var viewerWidth = 960, viewerHeight = 960;
+
+        // Dynamic Web TWAIN
+        var dwtObj = null;
+        var dwtRemoteObj = null;
+
+        function addThumbnailViewer() {
+            if (dwtObj) {
+                var thumbnailViewer = dwtObj.Viewer.createThumbnailViewer();
+                thumbnailViewer.show();
+            }
+        }
+
+        // Load DWT viewer automatically
+        function initDWT() {
+            Dynamsoft.WebTwainEnv.UseLocalService = false;
+            Dynamsoft.WebTwainEnv.AutoLoad = true;
+            // Get a free 30-day trial license key from https://www.dynamsoft.com/customer/license/trialLicense
+            // Dynamsoft.WebTwainEnv.ProductKey = 'LICENSE-KEY';
+            Dynamsoft.WebTwainEnv.Containers = [{ ContainerId: containerName, Width: viewerWidth, Height: viewerHeight }];
+            Dynamsoft.WebTwainEnv.RegisterEvent('OnWebTwainReady', function () {
+                dwtObj = Dynamsoft.WebTwainEnv.GetWebTwain(containerName);
+                if (dwtObj) {
+                    dwtObj.Width = viewerWidth;
+                    dwtObj.Height = viewerHeight;
+                    dwtObj.MouseShape = true;
+                    addThumbnailViewer();
+                }
+            });
+        }
+
+        // Load DWT viewer manually
+        function initDWTManually() {
+            Dynamsoft.WebTwainEnv.CreateDWTObjectEx({
+                WebTwainId: '1'
+            },
+                function (obj) {
+                    dwtObj = obj;
+                    dwtObj.Viewer.bind(element);
+                    dwtObj.Viewer.width = viewerWidth;
+                    dwtObj.Viewer.height = viewerHeight;
+                    dwtObj.Viewer.show();
+                    addThumbnailViewer();
+                },
+                function (err) {
+                    console.log(err);
+                }
+            );
+        }
+
+        // Connect to the remote DWT service
+        function initRemoteDWT(ip) {
+            var dwtConfig = { WebTwainId: ip, Host: ip, UseLocalService: 'true' };
+            Dynamsoft.WebTwainEnv.CreateDWTObjectEx(dwtConfig, function (dwt) {
+                dwtRemoteObj = dwt;
+                dwtRemoteObj.RegisterEvent('OnPostTransferAsync', function (outputInfo) {
+                    dwtRemoteObj.ConvertToBlob(
+                        [dwtRemoteObj.ImageIDToIndex(outputInfo.imageId)],
+                        Dynamsoft.EnumDWT_ImageType.IT_PNG,
+                        function (result, indices, type) {
+                            dwtObj.LoadImageFromBinary(
+                                result,
+                                function () {
+                                    console.log('Load the image successfully');
+                                    dwtRemoteObj.RemoveImage(dwtRemoteObj.ImageIDToIndex(outputInfo.imageId));
+                                },
+                                function (errorCode, errorString) {
+                                    console.log(errorString);
+                                }
+                            );
+                        },
+                        function (errorCode, errorString) {
+                            console.log(errorString);
+                        }
+                    );
+                }
+                );
+                
+                // Update the remote scanner list
+                dwtRemoteObj.GetSourceNamesAsync().then(function (result) {
+                    // Remove previous options
+                    for (var i = 0; i < selectSource.length; i++) {
+                        selectSource.remove(i);
+                    }
+
+                    for (var i = 0; i < result.length; i++)
+                        selectSource.options.add(new Option(result[i], i));
+                },
+                    function (fail) {
+                        console.log(fail);
+                    });
+            },
+                function (error) { console.log(error) });
+        }
+
+        // Trigger scanning
+        function acquireImage() {
+            if (dwtRemoteObj) {
+                var onSuccess, onFailure;
+                onSuccess = onFailure = function () {
+                    dwtRemoteObj.CloseSource();
+                };
+
+                var deviceConfiguration = {
+                    SelectSourceByIndex: 0,
+                    IfShowUI: false,
+                    PixelType: Dynamsoft.EnumDWT_PixelType.TWPT_RGB,
+                    Resolution: 300,
+                    IfFeederEnabled: false,
+                    IfDuplexEnabled: false,
+                    IfDisableSourceAfterAcquire: true,
+                };
+
+                dwtRemoteObj.SelectSourceByIndex(document.getElementById('source').selectedIndex);
+                dwtRemoteObj.AcquireImage(deviceConfiguration, onSuccess, onFailure);
+            }
+        }
+
+        // Launch file selection dialog or camera to load image files
+        function loadFile() {
+            if (dwtObj) {
+                dwtObj.LoadImageEx('', 5,
+                    function () {
+                        console.log('success');
+                    },
+                    function (errCode, error) {
+                        alert(error);
+                    }
+                );
+            }
+        }
+
+        // Switch DWT service connections
+        ip.onchange = function () {
+            initRemoteDWT(ip.value);
+        }
+
+        // initDWT();
+        initDWTManually();
+        initRemoteDWT(ip.value);
+    </script>
+</body>
+
+</html>
