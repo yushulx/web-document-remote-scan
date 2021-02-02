@@ -4,9 +4,9 @@ The sample shows how to scan documents from remote document scanners in mobile w
 ## SDK Download
 - [Dynamic Web TWAIN 16.2](https://www.dynamsoft.com/web-twain/downloads)
 
-    ![](https://www.dynamsoft.com/blog/wp-content/uploads/2021/02/dynamic-web-twain-download.png)
+    ![Dynamic Web TWAIN for Windows, Linux and macOS](https://www.dynamsoft.com/blog/wp-content/uploads/2021/02/dynamic-web-twain-download.png)
 
-## Get a Free 30-day Trial License
+## Get a 30-day Free Trial License
 Apply for a [trial license](https://www.dynamsoft.com/customer/license/trialLicense).
 
 ![DWT trial license](https://www.dynamsoft.com/blog/wp-content/uploads/2021/02/dynamic-web-twain-trial-license.png)
