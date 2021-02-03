@@ -39,3 +39,6 @@ Apply for a [trial license](https://www.dynamsoft.com/customer/license/trialLice
     <kbd><img src="https://www.dynamsoft.com/blog/wp-content/uploads/2021/01/web-document-remote-scan.jpg" width="50%">
 
     The image viewer contains images captured from remote document scanners and the mobile camera.
+
+## Blog
+[How to Build a Universal Document Scanning App in HTML5](https://www.dynamsoft.com/codepool/mobile-scanner-camera-document-capture.html)
