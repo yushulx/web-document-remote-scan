@@ -129,7 +129,7 @@
                 // Update the remote scanner list
                 dwtRemoteObj.GetSourceNamesAsync().then(function (result) {
                     // Remove previous options
-                    for (var i = 0; i < selectSource.length; i++) {
+                    while (selectSource.length) {
                         selectSource.remove(0);
                     }
 
