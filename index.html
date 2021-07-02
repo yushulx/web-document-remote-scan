@@ -130,7 +130,7 @@
                 dwtRemoteObj.GetSourceNamesAsync().then(function (result) {
                     // Remove previous options
                     for (var i = 0; i < selectSource.length; i++) {
-                        selectSource.remove(i);
+                        selectSource.remove(0);
                     }
 
                     for (var i = 0; i < result.length; i++)
