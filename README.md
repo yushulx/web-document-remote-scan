@@ -2,9 +2,8 @@
 The sample shows how to scan documents from remote document scanners in mobile web browsers.
 
 ## SDK Download
-- [Dynamic Web TWAIN 16.2](https://www.dynamsoft.com/web-twain/downloads)
+- [Dynamic Web TWAIN 17.1](https://www.dynamsoft.com/web-twain/downloads)
 
-    ![Dynamic Web TWAIN for Windows, Linux and macOS](https://www.dynamsoft.com/blog/wp-content/uploads/2021/02/dynamic-web-twain-download.png)
 
 ## Get a 30-day Free Trial License
 Apply for a [trial license](https://www.dynamsoft.com/customer/license/trialLicense).
@@ -20,7 +19,7 @@ Apply for a [trial license](https://www.dynamsoft.com/customer/license/trialLice
 
 
 ## Deployment
-1. Copy `Resources` folder from `Dynamsoft\Dynamic Web TWAIN SDK 16.2\Resources` to the project root directory.
+1. Copy `Resources` folder from `Dynamsoft\Dynamic Web TWAIN SDK <version> \Resources` to the project root directory.
 
 2. Update the license key in JavaScript:
 
